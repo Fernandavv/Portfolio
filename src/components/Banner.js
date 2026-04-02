@@ -6,49 +6,46 @@ import { ArrowRightCircle } from 'react-bootstrap-icons';
 const Banner = () => {
   const [loopNum, setLoopNum] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const toRotate = [
-    "Dev Full Stack",
-    "Backend com Java",
-    "APIs REST e SQL"
-  ];
-
   const [text, setText] = useState('');
   const [delta, setDelta] = useState(100);
+
+  const toRotate = [
+    'Dev Full Stack',
+    'Backend com Java',
+    'APIs REST e SQL',
+  ];
+
   const period = 2000;
 
   useEffect(() => {
-    const ticker = setInterval(() => {
-      tick();
-    }, delta);
+    const tick = () => {
+      const i = loopNum % toRotate.length;
+      const fullText = toRotate[i];
 
-    return () => {
-      clearInterval(ticker);
+      const updatedText = isDeleting
+        ? fullText.substring(0, text.length - 1)
+        : fullText.substring(0, text.length + 1);
+
+      setText(updatedText);
+
+      if (isDeleting) {
+        setDelta((prevDelta) => prevDelta / 1.8);
+      }
+
+      if (!isDeleting && updatedText === fullText) {
+        setIsDeleting(true);
+        setDelta(period);
+      } else if (isDeleting && updatedText === '') {
+        setIsDeleting(false);
+        setLoopNum((prev) => prev + 1);
+        setDelta(100);
+      }
     };
-  }, [text, loopNum, isDeleting, delta]);
 
-  const tick = () => {
-    const i = loopNum % toRotate.length;
-    const fullText = toRotate[i];
-    const updatedText = isDeleting
-      ? fullText.substring(0, text.length - 1)
-      : fullText.substring(0, text.length + 1);
+    const ticker = setInterval(tick, delta);
 
-    setText(updatedText);
-
-    if (isDeleting) {
-      setDelta((prevDelta) => prevDelta / 1.8);
-    }
-
-    if (!isDeleting && updatedText === fullText) {
-      setIsDeleting(true);
-      setDelta(period);
-    } else if (isDeleting && updatedText === '') {
-      setIsDeleting(false);
-      setLoopNum((prev) => prev + 1);
-      setDelta(100);
-    }
-  };
+    return () => clearInterval(ticker);
+  }, [text, loopNum, isDeleting, delta, toRotate, period]);
 
   return (
     <section className="banner" id="home">
