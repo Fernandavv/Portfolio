@@ -43,7 +43,10 @@ const Banner = () => {
     };
 
     const ticker = setInterval(tick, delta);
-    return () => clearInterval(ticker);
+
+    return () => {
+      clearInterval(ticker);
+    };
   }, [text, loopNum, isDeleting, delta]);
 
   return (
